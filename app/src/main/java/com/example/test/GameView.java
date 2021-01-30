@@ -35,8 +35,6 @@ public class GameView extends SurfaceView implements Runnable {
     private Character character;
     private GameActivity activity;
     private Background background1, background2;
-    private Bitmap warning;
-    private int warningWidth, warningHeight;
 
     public GameView (GameActivity activity, int screenX, int screenY) {
         super(activity);
@@ -77,11 +75,6 @@ public class GameView extends SurfaceView implements Runnable {
         lastY = screenY / 2 + 200;
 
         birds = new ArrayList<>();
-
-        warning = BitmapFactory.decodeResource(getResources(), R.drawable.warning);
-        warningWidth = (int) (warning.getWidth() * screenRatioX);
-        warningHeight = (int) (warning.getHeight() * screenRatioY);
-        warning = Bitmap.createScaledBitmap(warning, warningWidth, warningHeight,false);
     }
 
     @Override
@@ -114,16 +107,16 @@ public class GameView extends SurfaceView implements Runnable {
             character.y += 8 * screenRatioY;
         }
         if (character.isRunLeft) {
-            character.x -= 15 * screenRatioX;
+            character.x -= 10 * screenRatioX;
         }
         if (character.isRunRight) {
             if (character.isOnGround)
-                character.x += 18 * screenRatioX;
+                character.x += 13 * screenRatioX;
             else
-                character.x += 15 * screenRatioX;
+                character.x += 10 * screenRatioX;
         }
         if (character.isJump > 0) {
-            character.y -= 45 * screenRatioY;
+            character.y -= 47 * screenRatioY;
             character.isJump--;
         }
         if (character.isDown) {
@@ -251,7 +244,7 @@ public class GameView extends SurfaceView implements Runnable {
                     canvas.drawBitmap(bird.getBird(), bird.x, bird.y, paint);
                 }
                 else {
-                    canvas.drawBitmap(warning, screenX - warningWidth, bird.y, paint);
+                    canvas.drawBitmap(background1.warning, screenX - background1.warningWidth, bird.y, paint);
                 }
 
             }
@@ -307,13 +300,15 @@ public class GameView extends SurfaceView implements Runnable {
 
                 if (event.getX() < screenX / 2) {
                     character.isRunLeft = true;
-                    character.isRight = false;
+                    character.isRunRight = false;
                     character.isLeft = true;
+                    character.isRight = false;
                 }
                 if (event.getX() > screenX / 2) {
+                    character.isRunLeft = false;
                     character.isRunRight = true;
-                    character.isRight = true;
                     character.isLeft = false;
+                    character.isRight = true;
                 }
                 break;
             case MotionEvent.ACTION_UP:
