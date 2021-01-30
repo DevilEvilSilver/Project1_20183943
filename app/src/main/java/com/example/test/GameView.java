@@ -24,7 +24,7 @@ public class GameView extends SurfaceView implements Runnable {
     private int screenX, screenY;
     public static float screenRatioX, screenRatioY;
     private float y1, y2;
-    private static final int MIN_DISTANCE = 5;
+    private static final int MIN_DISTANCE = 3;
     private Random random;
     private Paint paint;
     private SharedPreferences preferences;
@@ -63,7 +63,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         this.platform = new Platform(getResources());
         platforms = new ArrayList<>();
-        Platform[] startPlatforms = new Platform[9];
+        Platform[] startPlatforms = new Platform[8];
         int startPlatformX = 0;
         for (Platform platform: startPlatforms) {
             platform = new Platform(getResources());
@@ -187,7 +187,7 @@ public class GameView extends SurfaceView implements Runnable {
             rand1 = random.nextInt(100);
 
             if (rand1 < 60) {
-                platformCount = this.platform.width;
+                platformCount = this.platform.width + 20;
             }
             if (rand1 >= 60 && rand1 < 90) {
                 platformCount = this.platform.width * 2;
