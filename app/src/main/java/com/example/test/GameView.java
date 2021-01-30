@@ -20,15 +20,15 @@ public class GameView extends SurfaceView implements Runnable {
 
     private Thread thread;
     private boolean isPlaying, isGameOver = false;
-    private int screenX, screenY, score = 0;
+    private int score = 0;
+    private int screenX, screenY;
     public static float screenRatioX, screenRatioY;
-    private float x1, x2, y1, y2;
-    private static int MIN_DISTANCE = 100;
+    private float y1, y2;
+    private static final int MIN_DISTANCE = 5;
     private Random random;
     private Paint paint;
     private SharedPreferences preferences;
     private List<Platform> platforms;
-    private Platform[] startPlatforms;
     private Platform platform;
     private List<Bird> birds;
     private int platformCount = 0, birdCount = 0, lastX, lastY, rand1, rand2;
@@ -65,7 +65,7 @@ public class GameView extends SurfaceView implements Runnable {
 
         this.platform = new Platform(getResources());
         platforms = new ArrayList<>();
-        startPlatforms = new Platform[9];
+        Platform[] startPlatforms = new Platform[9];
         int startPlatformX = 0;
         for (Platform platform: startPlatforms) {
             platform = new Platform(getResources());
@@ -111,7 +111,7 @@ public class GameView extends SurfaceView implements Runnable {
             return;
         }
         if (!character.isOnGround) {
-            character.y += 4 * screenRatioY;
+            character.y += 8 * screenRatioY;
         }
         if (character.isRunLeft) {
             character.x -= 15 * screenRatioX;
@@ -123,11 +123,11 @@ public class GameView extends SurfaceView implements Runnable {
                 character.x += 15 * screenRatioX;
         }
         if (character.isJump > 0) {
-            character.y -= 50 * screenRatioY;
+            character.y -= 45 * screenRatioY;
             character.isJump--;
         }
         if (character.isDown) {
-            character.y += 11 * screenRatioY;
+            character.y += 8 * screenRatioY;
         }
 
         //platform update
@@ -145,7 +145,7 @@ public class GameView extends SurfaceView implements Runnable {
                 if (character.y + character.height < platform.y + platform.height
                         && character.y + character.height > platform.y) {
                     character.y = platform.y - character.height + 1;
-                    character.x -= platform.speed;
+                    character.x = (int) (character.x - (platform.speed * screenRatioX) - 3);
                     character.isOnGround = true;
                     character.isDown = false;
                     groundCheck++;
@@ -303,35 +303,42 @@ public class GameView extends SurfaceView implements Runnable {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x1 = event.getX();
                 y1 = event.getY();
 
-                if (x1 < screenX / 2) {
+                if (event.getX() < screenX / 2) {
                     character.isRunLeft = true;
+                    character.isRight = false;
+                    character.isLeft = true;
                 }
-                if (x1 > screenX / 2) {
+                if (event.getX() > screenX / 2) {
                     character.isRunRight = true;
+                    character.isRight = true;
+                    character.isLeft = false;
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                x2 = event.getX();
                 y2 = event.getY();
 
                 float valueY = y1 - y2;
 
-                if (x2 < screenX / 2) {
+                if (event.getX() < screenX / 2) {
                     character.isRunLeft = false;
+                    character.isLeft = true;
+                    character.isRight = false;
                 }
-                if (x2 > screenX / 2) {
+                if (event.getX() > screenX / 2) {
                     character.isRunRight = false;
+                    character.isRight = true;
+                    character.isLeft = false;
                 }
                 if (Math.abs(valueY) > MIN_DISTANCE) {
                     if (y2 > y1 & character.isOnGround == false) {
                         character.isDown = true;
                     }
                     else if (y2 < y1 & character.isOnGround == true) {
-                        character.isJump = 8;
+                        character.isJump = 9;
                         character.isOnGround = false;
+                        character.charCounter = 1;
                     }
                 }
                 break;
